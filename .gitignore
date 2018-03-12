@@ -1,0 +1,14 @@
+.vs/
+obj/
+bin/
+*.dbmdl
+*.user
+packages/
+
+*.bak
+*.publish.xml
+_last_build/
+*.log
+*.orig
+Debug/
+*.svclog
