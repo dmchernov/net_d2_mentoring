@@ -1,21 +1,24 @@
-﻿using System;
+﻿using DownloadManager.Annotations;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DownloadManager
 {
-	public class DownloadModel
+	public class DownloadModel : INotifyPropertyChanged
 	{
-		private IList<Download> _dowloads = new ObservableCollection<Download>();
+		private ObservableCollection<Download> _dowloads = new ObservableCollection<Download>();
 		private readonly IDictionary<Download, CancellationTokenSource> _cancellations = new ConcurrentDictionary<Download, CancellationTokenSource>();
 
-		public IList<Download> Downloads => _dowloads;
+		public ObservableCollection<Download> Downloads => _dowloads;
 
 		public void Add(string uri, string caption, string fileName)
 		{
@@ -28,67 +31,94 @@ namespace DownloadManager
 			};
 
 			_dowloads.Add(download);
+			download.PropertyChanged += PropertyChanged;
 		}
 
-		public void Delete(Download download)
+		public async void DeleteAsync(Download download)
 		{
-			if (_cancellations.Keys.Contains(download))
+			await Task.Factory.StartNew(() =>
 			{
-				var cts = _cancellations[download];
-				cts.Cancel();
-				Thread.Sleep(500);
-			}
+				if (_cancellations.Keys.Contains(download))
+				{
+					var cts = _cancellations[download];
+					cts.Cancel();
+					Thread.Sleep(500);
+				}
 
-			if (_dowloads.Contains(download))
-				_dowloads.Remove(download);
+				if (_dowloads.Contains(download))
+					_dowloads.Remove(download);
+			}, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
-		public void Start(Download download)
+		public async void StartAsync(Download download)
 		{
 			var cts = new CancellationTokenSource();
 			var token = cts.Token;
 			_cancellations[download] = cts;
-			DownloadResource(download, token);
+			await DownloadResourceAsync(download, token);
 		}
 
-		private async void DownloadResource(Download download, CancellationToken token)
+		private async Task DownloadResourceAsync(Download download, CancellationToken token)
 		{
-			await Task.Run(() =>
+			await Task.Factory.StartNew(() =>
 			{
 				var webClient = new WebClient();
 				try
 				{
 					download.Status = Status.InProgress;
-					webClient.DownloadFileAsync(download.Uri, download.LocalFileName);
-					webClient.DownloadProgressChanged += (sender, args) =>
+					webClient.DownloadProgressChanged += async (sender, args) =>
 					{
-						download.Percentsdownloaded = args.ProgressPercentage;
+						download.PercentsDownloaded = args.ProgressPercentage;
 						if (token.IsCancellationRequested)
 						{
 							webClient.CancelAsync();
 							download.Status = Status.Cancelled;
-							Thread.Sleep(500);
-							if (File.Exists(download.LocalFileName))
-								File.Delete(download.LocalFileName);
+							await Task.Factory.StartNew(() =>
+							{
+								Thread.Sleep(500);
+								if (File.Exists(download.LocalFileName))
+									File.Delete(download.LocalFileName);
+							});
 						}
 						else if (args.BytesReceived == args.TotalBytesToReceive)
 						{
 							download.Status = Status.Completed;
-							//webClient.Dispose();
 						}
 					};
+					webClient.DownloadFileAsync(download.Uri, download.LocalFileName);
 				}
 				finally
 				{
 					webClient.Dispose();
 				}
-			}, token);
+			}, token, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
-		public void CancelDownload(Download download)
+		public async void CancelDownloadAsync(Download download)
 		{
-			var cts = _cancellations[download];
-			cts.Cancel();
+			await Task.Factory.StartNew(() =>
+			{
+				var cts = _cancellations[download];
+				cts.Cancel();
+			}, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		[NotifyPropertyChangedInvocator]
+		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		public void SetCurrentDownload(Download download)
+		{
+			_selected = download;
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanRunDownload)));
+		}
+
+		private Download _selected;
+
+		public bool CanRunDownload => _selected != null;
 	}
 }

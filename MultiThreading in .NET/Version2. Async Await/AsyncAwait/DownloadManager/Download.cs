@@ -24,7 +24,7 @@ namespace DownloadManager
 			}
 		}
 
-		public int Percentsdownloaded
+		public int PercentsDownloaded
 		{
 			get => _percentsdownloaded;
 			set
