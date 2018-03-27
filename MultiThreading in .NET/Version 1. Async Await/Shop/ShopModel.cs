@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -13,6 +12,18 @@ namespace Shop
 {
 	public class ShopModel : INotifyPropertyChanged
 	{
+		public event EventHandler SelectedChanged;
+
+		public ShopModel()
+		{
+			_selectedProducts.CollectionChanged += _selectedProducts_CollectionChanged;
+		}
+
+		private void _selectedProducts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			SelectedChanged?.Invoke(this, EventArgs.Empty);
+		}
+
 		private IList<Product> _products = new List<Product>()
 		{
 			new Product{Id = 1, Name = "Пицца", Price = 50.0m},
@@ -23,7 +34,7 @@ namespace Shop
 			new Product{Id = 6, Name = "Печенье", Price = 10.0m},
 		};
 
-		private IList<Product> _selectedProducts = new ObservableCollection<Product>();
+		private ObservableCollection<Product> _selectedProducts = new ObservableCollection<Product>();
 		private decimal? _sum;
 
 		public IList<Product> AllProducts => _products;
@@ -41,7 +52,7 @@ namespace Shop
 			}
 		}
 
-		public async void Add(int productId)
+		public async Task Add(int productId)
 		{
 			await new TaskFactory().StartNew(() =>
 			{
@@ -51,10 +62,10 @@ namespace Shop
 					_selectedProducts.Add(product);
 					Recalculate();
 				}
-			}, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+			});
 		}
 
-		public async void Delete(Product product)
+		public async Task Delete(Product product)
 		{
 			await new TaskFactory().StartNew(() =>
 			{
@@ -63,12 +74,16 @@ namespace Shop
 					_selectedProducts.Remove(product);
 					Recalculate();
 				}
-			}, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+			});
 		}
 
 		private async void Recalculate()
 		{
-			Sum = await Task.Run(() => _selectedProducts.Sum(p => p.Price));
+			Sum = await Task.Factory.StartNew(() =>
+			{
+				//Thread.Sleep(3000);
+				return _selectedProducts.Sum(p => p.Price);
+			});
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

@@ -34,6 +34,8 @@ namespace DownloadManager
 			_model.PropertyChanged += _model_PropertyChanged;
 
 			simpleButtonRun.DataBindings.Add("Enabled", _model, nameof(DownloadModel.CanRunDownload), false, DataSourceUpdateMode.OnPropertyChanged);
+			simpleButtonCancel.DataBindings.Add("Enabled", _model, nameof(DownloadModel.CanCancelDownload), false, DataSourceUpdateMode.OnPropertyChanged);
+			simpleButtonDelete.DataBindings.Add("Enabled", _model, nameof(DownloadModel.CanDeleteDownload), false, DataSourceUpdateMode.OnPropertyChanged);
 			gridView1.FocusedRowChanged += GridView1_FocusedRowChanged;
 			RefreshGrid();
 		}

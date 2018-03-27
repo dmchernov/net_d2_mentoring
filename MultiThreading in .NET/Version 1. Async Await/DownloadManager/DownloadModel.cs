@@ -9,7 +9,6 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace DownloadManager
 {
@@ -32,6 +31,13 @@ namespace DownloadManager
 
 			_dowloads.Add(download);
 			download.PropertyChanged += PropertyChanged;
+			download.PropertyChanged += Download_PropertyChanged; ;
+		}
+
+		private void Download_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName.Equals(nameof(Download.Status)))
+				ModelStateChanged();
 		}
 
 		public async void DeleteAsync(Download download)
@@ -58,9 +64,9 @@ namespace DownloadManager
 			await DownloadResourceAsync(download, token);
 		}
 
-		private async Task DownloadResourceAsync(Download download, CancellationToken token)
+		private Task DownloadResourceAsync(Download download, CancellationToken token)
 		{
-			await Task.Factory.StartNew(() =>
+			return Task.Factory.StartNew(() =>
 			{
 				var webClient = new WebClient();
 				try
@@ -114,11 +120,20 @@ namespace DownloadManager
 		public void SetCurrentDownload(Download download)
 		{
 			_selected = download;
+			ModelStateChanged();
+		}
+
+		private void ModelStateChanged()
+		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanRunDownload)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanCancelDownload)));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanDeleteDownload)));
 		}
 
 		private Download _selected;
 
-		public bool CanRunDownload => _selected != null;
+		public bool CanRunDownload => _selected != null && _selected.Status != Status.InProgress;
+		public bool CanCancelDownload => _selected != null && _selected.Status == Status.InProgress;
+		public bool CanDeleteDownload => _selected != null && _selected.Status != Status.InProgress;
 	}
 }
