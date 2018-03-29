@@ -54,7 +54,7 @@
 			this.textEditAddress.Location = new System.Drawing.Point(57, 9);
 			this.textEditAddress.Name = "textEditAddress";
 			this.textEditAddress.Size = new System.Drawing.Size(428, 20);
-			this.textEditAddress.TabIndex = 1;
+			this.textEditAddress.TabIndex = 0;
 			// 
 			// labelControlFileName
 			// 
@@ -77,7 +77,7 @@
 			this.textEditCaption.Location = new System.Drawing.Point(57, 61);
 			this.textEditCaption.Name = "textEditCaption";
 			this.textEditCaption.Size = new System.Drawing.Size(428, 20);
-			this.textEditCaption.TabIndex = 1;
+			this.textEditCaption.TabIndex = 2;
 			// 
 			// simpleButtonAdd
 			// 
@@ -107,8 +107,12 @@
 			this.Controls.Add(this.labelControlCaption);
 			this.Controls.Add(this.labelControlFileName);
 			this.Controls.Add(this.labelControlAddress);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "AddResourceForm";
-			this.Text = "AddResourceForm";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			this.Text = "Add download";
 			((System.ComponentModel.ISupportInitialize)(this.textEditAddress.Properties)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.textEditCaption.Properties)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.textEditFileName.Properties)).EndInit();

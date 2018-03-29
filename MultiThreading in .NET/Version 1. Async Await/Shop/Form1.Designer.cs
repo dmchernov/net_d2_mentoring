@@ -37,12 +37,10 @@
 			this.labelControlTotalCaption = new DevExpress.XtraEditors.LabelControl();
 			this.simpleButtonRemove = new DevExpress.XtraEditors.SimpleButton();
 			this.textEditTotal = new DevExpress.XtraEditors.TextEdit();
-			this.dataGridView1 = new System.Windows.Forms.DataGridView();
 			((System.ComponentModel.ISupportInitialize)(this.lookUpEditAllProducts.Properties)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.textEditTotal.Properties)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// labelControlSelected
@@ -70,6 +68,7 @@
 			this.lookUpEditAllProducts.Properties.Columns.AddRange(new DevExpress.XtraEditors.Controls.LookUpColumnInfo[] {
             new DevExpress.XtraEditors.Controls.LookUpColumnInfo("Name", "Name")});
 			this.lookUpEditAllProducts.Properties.DisplayMember = "Name";
+			this.lookUpEditAllProducts.Properties.NullText = "";
 			this.lookUpEditAllProducts.Properties.ValueMember = "Id";
 			this.lookUpEditAllProducts.Size = new System.Drawing.Size(280, 20);
 			this.lookUpEditAllProducts.TabIndex = 2;
@@ -100,7 +99,7 @@
 			// 
 			// labelControlTotalCaption
 			// 
-			this.labelControlTotalCaption.Location = new System.Drawing.Point(12, 260);
+			this.labelControlTotalCaption.Location = new System.Drawing.Point(320, 265);
 			this.labelControlTotalCaption.Name = "labelControlTotalCaption";
 			this.labelControlTotalCaption.Size = new System.Drawing.Size(28, 13);
 			this.labelControlTotalCaption.TabIndex = 0;
@@ -108,7 +107,7 @@
 			// 
 			// simpleButtonRemove
 			// 
-			this.simpleButtonRemove.Location = new System.Drawing.Point(12, 279);
+			this.simpleButtonRemove.Location = new System.Drawing.Point(12, 260);
 			this.simpleButtonRemove.Name = "simpleButtonRemove";
 			this.simpleButtonRemove.Size = new System.Drawing.Size(75, 23);
 			this.simpleButtonRemove.TabIndex = 3;
@@ -117,25 +116,17 @@
 			// 
 			// textEditTotal
 			// 
-			this.textEditTotal.Location = new System.Drawing.Point(319, 257);
+			this.textEditTotal.Location = new System.Drawing.Point(354, 262);
 			this.textEditTotal.Name = "textEditTotal";
-			this.textEditTotal.Size = new System.Drawing.Size(100, 20);
+			this.textEditTotal.Properties.ReadOnly = true;
+			this.textEditTotal.Size = new System.Drawing.Size(65, 20);
 			this.textEditTotal.TabIndex = 5;
-			// 
-			// dataGridView1
-			// 
-			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridView1.Location = new System.Drawing.Point(462, 54);
-			this.dataGridView1.Name = "dataGridView1";
-			this.dataGridView1.Size = new System.Drawing.Size(457, 332);
-			this.dataGridView1.TabIndex = 6;
 			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(931, 532);
-			this.Controls.Add(this.dataGridView1);
+			this.ClientSize = new System.Drawing.Size(430, 291);
 			this.Controls.Add(this.textEditTotal);
 			this.Controls.Add(this.gridControl1);
 			this.Controls.Add(this.simpleButtonRemove);
@@ -144,13 +135,15 @@
 			this.Controls.Add(this.labelControlAllProducts);
 			this.Controls.Add(this.labelControlTotalCaption);
 			this.Controls.Add(this.labelControlSelected);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "Form1";
-			this.Text = "Form1";
+			this.Text = "Shop";
 			((System.ComponentModel.ISupportInitialize)(this.lookUpEditAllProducts.Properties)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridControl1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.textEditTotal.Properties)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -167,7 +160,6 @@
 		private DevExpress.XtraEditors.LabelControl labelControlTotalCaption;
 		private DevExpress.XtraEditors.SimpleButton simpleButtonRemove;
 		private DevExpress.XtraEditors.TextEdit textEditTotal;
-		private System.Windows.Forms.DataGridView dataGridView1;
 	}
 }
 

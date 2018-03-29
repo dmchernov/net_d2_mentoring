@@ -104,8 +104,12 @@
 			this.Controls.Add(this.simpleButtonAdd);
 			this.Controls.Add(this.simpleButtonCancel);
 			this.Controls.Add(this.simpleButtonDelete);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "DownloadManagerForm";
-			this.Text = "Form1";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			this.Text = "Download manager";
 			((System.ComponentModel.ISupportInitialize)(this.gridControlDownloads)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
 			this.ResumeLayout(false);

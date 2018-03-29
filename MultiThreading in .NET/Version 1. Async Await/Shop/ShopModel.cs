@@ -12,8 +12,6 @@ namespace Shop
 {
 	public class ShopModel : INotifyPropertyChanged
 	{
-		public event EventHandler SelectedChanged;
-
 		public ShopModel()
 		{
 			_selectedProducts.CollectionChanged += _selectedProducts_CollectionChanged;
@@ -21,7 +19,7 @@ namespace Shop
 
 		private void _selectedProducts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			SelectedChanged?.Invoke(this, EventArgs.Empty);
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedProducts"));
 		}
 
 		private IList<Product> _products = new List<Product>()
@@ -37,9 +35,12 @@ namespace Shop
 		private ObservableCollection<Product> _selectedProducts = new ObservableCollection<Product>();
 		private decimal? _sum;
 
-		public IList<Product> AllProducts => _products;
+		public IList<Product> AllProducts => _products.Except(_selectedProducts).ToList();
 
 		public IList<Product> SelectedProducts => _selectedProducts;
+
+		public bool CanAdd => true;
+		public bool CanRemove => SelectedProducts?.Count > 0;
 
 		public decimal? Sum
 		{
@@ -57,9 +58,10 @@ namespace Shop
 			await new TaskFactory().StartNew(() =>
 			{
 				var product = _products.FirstOrDefault(p => p.Id == productId);
-				if (!_selectedProducts.Contains(product) && product != null)
+				if (product != null)
 				{
 					_selectedProducts.Add(product);
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanRemove)));
 					Recalculate();
 				}
 			});
@@ -72,6 +74,7 @@ namespace Shop
 				if (_selectedProducts.Contains(product))
 				{
 					_selectedProducts.Remove(product);
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanRemove)));
 					Recalculate();
 				}
 			});
@@ -81,7 +84,7 @@ namespace Shop
 		{
 			Sum = await Task.Factory.StartNew(() =>
 			{
-				//Thread.Sleep(3000);
+				Thread.Sleep(3000);
 				return _selectedProducts.Sum(p => p.Price);
 			});
 		}

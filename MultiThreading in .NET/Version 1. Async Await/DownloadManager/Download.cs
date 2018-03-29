@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using DownloadManager.Annotations;
 
@@ -9,8 +10,14 @@ namespace DownloadManager
 	{
 		private Status _status;
 		private int _percentsdownloaded;
+
+		[Required]
 		public string Caption { get; set; }
+
+		[Required]
 		public Uri Uri { get; set; }
+
+		[Required]
 		public string LocalFileName { get; set; }
 
 		public Status Status
