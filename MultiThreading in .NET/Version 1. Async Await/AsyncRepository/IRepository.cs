@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace AsyncRepository
 {
-	interface IRepository
+	public interface IRepository
 	{
 		Task Create(Customer customer);
 		Task Update(Customer customer, int customerId);
-		Task Delete(Customer customer);
+		Task Delete(int customerId);
 		Task<Customer> GetCustomerById(int customerId);
 
 		event EventHandler<string> RepositoryMessageGenerated;
