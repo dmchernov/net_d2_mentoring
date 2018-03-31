@@ -1,4 +1,6 @@
-﻿namespace AsyncRepository
+﻿using System.ComponentModel;
+
+namespace AsyncRepository
 {
 	class Customer
 	{
