@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using AsyncRepository.Annotations;
 
 namespace AsyncRepository
@@ -61,6 +63,15 @@ namespace AsyncRepository
 		public async void DeleteCustomer(int customerId)
 		{
 			await _repository.Delete(customerId);
+		}
+
+		public async Task<string> GetCustomerAsString(int customerId)
+		{
+			var c = await _repository.GetCustomerById(customerId);
+			if (c != null)
+				return $"Id={c.Id}, First name = {c.FirstName}, LastName = {c.LastName}, Age = {c.Age}";
+
+			return String.Empty;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

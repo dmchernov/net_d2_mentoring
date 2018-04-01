@@ -40,7 +40,15 @@ namespace AsyncRepository
 		{
 			await Task.Factory.StartNew(() =>
 			{
-				BeginProcessing(customerId);
+				try
+				{
+					BeginProcessing(customerId);
+				}
+				catch (InvalidOperationException ex)
+				{
+					GenerateMessage(ex.Message);
+					return;
+				}
 				GenerateMessage("Connecting to server . . .");
 				Thread.Sleep(2000);
 				GenerateMessage("Deleting customer . . .");
@@ -51,31 +59,47 @@ namespace AsyncRepository
 				else
 				{
 					RemoveCustomer(customer);
-					GenerateMessage($"Customer has been saved. ID = {customerId}");
+					GenerateMessage($"Customer has been deleted. ID = {customerId}");
 				}
+				EndProcessing(customerId);
 			});
 		}
 
 		public async Task<Customer> GetCustomerById(int customerId)
 		{
-			var customer = await Task.Factory.StartNew(() =>
+			return await Task<Customer>.Factory.StartNew(() =>
 			{
 				GenerateMessage("Connecting to server . . .");
 				Thread.Sleep(3000);
 				GenerateMessage("Searching customer . . .");
 				Thread.Sleep(1000);
-				GenerateMessage("Customer has been found.");
-				return Customers.FirstOrDefault(c => c.Id == customerId);
+				var customer = Customers.FirstOrDefault(c => c.Id == customerId);
+				if (customer == null)
+				{
+					GenerateMessage($"Customer ID = {customerId} not found");
+					return null;
+				}
+				else
+				{
+					GenerateMessage($"Customer ID = {customerId} has been found");
+					return customer;
+				}
 			});
-
-			return customer;
 		}
 
 		public async Task Update(Customer customer, int customerId)
 		{
 			await Task.Factory.StartNew(() =>
 			{
-				BeginProcessing(customerId);
+				try
+				{
+					BeginProcessing(customerId);
+				}
+				catch (InvalidOperationException ex)
+				{
+					GenerateMessage(ex.Message);
+					return;
+				}
 				GenerateMessage("Connecting to server . . .");
 				Thread.Sleep(500);
 				GenerateMessage("Updating customer . . .");

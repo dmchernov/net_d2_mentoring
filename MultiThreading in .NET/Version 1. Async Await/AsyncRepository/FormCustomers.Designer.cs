@@ -28,7 +28,6 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.dataGridView1 = new System.Windows.Forms.DataGridView();
 			this.labelControlId = new DevExpress.XtraEditors.LabelControl();
 			this.textEditId = new DevExpress.XtraEditors.TextEdit();
 			this.labelControlFirstName = new DevExpress.XtraEditors.LabelControl();
@@ -42,21 +41,16 @@
 			this.simpleButtonUpdate = new DevExpress.XtraEditors.SimpleButton();
 			this.simpleButtonDelete = new DevExpress.XtraEditors.SimpleButton();
 			this.simpleButtonGet = new DevExpress.XtraEditors.SimpleButton();
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+			this.gridControlCustomers = new DevExpress.XtraGrid.GridControl();
+			this.gridView1 = new DevExpress.XtraGrid.Views.Grid.GridView();
 			((System.ComponentModel.ISupportInitialize)(this.textEditId.Properties)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.textEditFirstName.Properties)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.textEditLastName.Properties)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.spinEditAge.Properties)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.memoEditLog.Properties)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.gridControlCustomers)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
 			this.SuspendLayout();
-			// 
-			// dataGridView1
-			// 
-			this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dataGridView1.Location = new System.Drawing.Point(12, 12);
-			this.dataGridView1.Name = "dataGridView1";
-			this.dataGridView1.Size = new System.Drawing.Size(396, 426);
-			this.dataGridView1.TabIndex = 0;
 			// 
 			// labelControlId
 			// 
@@ -72,7 +66,7 @@
 			this.textEditId.Name = "textEditId";
 			this.textEditId.Properties.ReadOnly = true;
 			this.textEditId.Size = new System.Drawing.Size(318, 20);
-			this.textEditId.TabIndex = 2;
+			this.textEditId.TabIndex = 9;
 			// 
 			// labelControlFirstName
 			// 
@@ -87,7 +81,7 @@
 			this.textEditFirstName.Location = new System.Drawing.Point(470, 38);
 			this.textEditFirstName.Name = "textEditFirstName";
 			this.textEditFirstName.Size = new System.Drawing.Size(318, 20);
-			this.textEditFirstName.TabIndex = 2;
+			this.textEditFirstName.TabIndex = 0;
 			// 
 			// labelControlLastName
 			// 
@@ -102,7 +96,7 @@
 			this.textEditLastName.Location = new System.Drawing.Point(470, 64);
 			this.textEditLastName.Name = "textEditLastName";
 			this.textEditLastName.Size = new System.Drawing.Size(318, 20);
-			this.textEditLastName.TabIndex = 2;
+			this.textEditLastName.TabIndex = 1;
 			// 
 			// labelControlAge
 			// 
@@ -134,22 +128,22 @@
             0});
 			this.spinEditAge.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor;
 			this.spinEditAge.Size = new System.Drawing.Size(318, 20);
-			this.spinEditAge.TabIndex = 3;
+			this.spinEditAge.TabIndex = 2;
 			// 
-			// memoEdit1
+			// memoEditLog
 			// 
 			this.memoEditLog.Location = new System.Drawing.Point(414, 145);
-			this.memoEditLog.Name = "memoEdit1";
+			this.memoEditLog.Name = "memoEditLog";
 			this.memoEditLog.Properties.ReadOnly = true;
 			this.memoEditLog.Size = new System.Drawing.Size(374, 293);
-			this.memoEditLog.TabIndex = 4;
+			this.memoEditLog.TabIndex = 7;
 			// 
 			// simpleButtonAdd
 			// 
 			this.simpleButtonAdd.Location = new System.Drawing.Point(470, 116);
 			this.simpleButtonAdd.Name = "simpleButtonAdd";
 			this.simpleButtonAdd.Size = new System.Drawing.Size(75, 23);
-			this.simpleButtonAdd.TabIndex = 5;
+			this.simpleButtonAdd.TabIndex = 3;
 			this.simpleButtonAdd.Text = "Add";
 			this.simpleButtonAdd.Click += new System.EventHandler(this.simpleButtonAdd_Click);
 			// 
@@ -158,8 +152,9 @@
 			this.simpleButtonUpdate.Location = new System.Drawing.Point(551, 116);
 			this.simpleButtonUpdate.Name = "simpleButtonUpdate";
 			this.simpleButtonUpdate.Size = new System.Drawing.Size(75, 23);
-			this.simpleButtonUpdate.TabIndex = 5;
+			this.simpleButtonUpdate.TabIndex = 4;
 			this.simpleButtonUpdate.Text = "Update";
+			this.simpleButtonUpdate.Click += new System.EventHandler(this.simpleButtonUpdate_Click);
 			// 
 			// simpleButtonDelete
 			// 
@@ -168,20 +163,42 @@
 			this.simpleButtonDelete.Size = new System.Drawing.Size(75, 23);
 			this.simpleButtonDelete.TabIndex = 5;
 			this.simpleButtonDelete.Text = "Delete";
+			this.simpleButtonDelete.Click += new System.EventHandler(this.simpleButtonDelete_Click);
 			// 
 			// simpleButtonGet
 			// 
 			this.simpleButtonGet.Location = new System.Drawing.Point(713, 116);
 			this.simpleButtonGet.Name = "simpleButtonGet";
 			this.simpleButtonGet.Size = new System.Drawing.Size(75, 23);
-			this.simpleButtonGet.TabIndex = 5;
+			this.simpleButtonGet.TabIndex = 6;
 			this.simpleButtonGet.Text = "Get";
+			this.simpleButtonGet.Click += new System.EventHandler(this.simpleButtonGet_Click);
+			// 
+			// gridControlCustomers
+			// 
+			this.gridControlCustomers.Location = new System.Drawing.Point(12, 12);
+			this.gridControlCustomers.MainView = this.gridView1;
+			this.gridControlCustomers.Name = "gridControlCustomers";
+			this.gridControlCustomers.Size = new System.Drawing.Size(396, 426);
+			this.gridControlCustomers.TabIndex = 8;
+			this.gridControlCustomers.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
+            this.gridView1});
+			// 
+			// gridView1
+			// 
+			this.gridView1.GridControl = this.gridControlCustomers;
+			this.gridView1.Name = "gridView1";
+			this.gridView1.OptionsBehavior.AllowAddRows = DevExpress.Utils.DefaultBoolean.False;
+			this.gridView1.OptionsBehavior.AllowDeleteRows = DevExpress.Utils.DefaultBoolean.False;
+			this.gridView1.OptionsBehavior.Editable = false;
+			this.gridView1.FocusedRowChanged += new DevExpress.XtraGrid.Views.Base.FocusedRowChangedEventHandler(this.gridView1_FocusedRowChanged);
 			// 
 			// FormCustomers
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
+			this.Controls.Add(this.gridControlCustomers);
 			this.Controls.Add(this.simpleButtonGet);
 			this.Controls.Add(this.simpleButtonDelete);
 			this.Controls.Add(this.simpleButtonUpdate);
@@ -195,23 +212,25 @@
 			this.Controls.Add(this.textEditId);
 			this.Controls.Add(this.labelControlFirstName);
 			this.Controls.Add(this.labelControlId);
-			this.Controls.Add(this.dataGridView1);
+			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "FormCustomers";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Customers";
-			((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.textEditId.Properties)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.textEditFirstName.Properties)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.textEditLastName.Properties)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.spinEditAge.Properties)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.memoEditLog.Properties)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.gridControlCustomers)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
 		}
 
 		#endregion
-
-		private System.Windows.Forms.DataGridView dataGridView1;
 		private DevExpress.XtraEditors.LabelControl labelControlId;
 		private DevExpress.XtraEditors.TextEdit textEditId;
 		private DevExpress.XtraEditors.LabelControl labelControlFirstName;
@@ -225,6 +244,8 @@
 		private DevExpress.XtraEditors.SimpleButton simpleButtonUpdate;
 		private DevExpress.XtraEditors.SimpleButton simpleButtonDelete;
 		private DevExpress.XtraEditors.SimpleButton simpleButtonGet;
+		private DevExpress.XtraGrid.GridControl gridControlCustomers;
+		private DevExpress.XtraGrid.Views.Grid.GridView gridView1;
 	}
 }
 
