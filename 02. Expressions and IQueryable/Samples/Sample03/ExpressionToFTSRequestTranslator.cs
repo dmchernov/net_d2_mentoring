@@ -29,6 +29,40 @@ namespace Sample03
 
 				return node;
 			}
+
+			if (node.Method.DeclaringType == typeof(String)
+			    && node.Method.Name == nameof(String.Contains))
+			{
+				Visit(node.Object);
+				resultString.Append("(*");
+				Visit(node.Arguments[0]);
+				resultString.Append("*)");
+
+				return node;
+			}
+
+			if (node.Method.DeclaringType == typeof(String)
+			    && node.Method.Name == nameof(String.StartsWith))
+			{
+				Visit(node.Object);
+				resultString.Append("(");
+				Visit(node.Arguments[0]);
+				resultString.Append("*)");
+
+				return node;
+			}
+
+			if (node.Method.DeclaringType == typeof(String)
+			    && node.Method.Name == nameof(String.EndsWith))
+			{
+				Visit(node.Object);
+				resultString.Append("(*");
+				Visit(node.Arguments[0]);
+				resultString.Append(")");
+
+				return node;
+			}
+
 			return base.VisitMethodCall(node);
 		}
 
@@ -51,7 +85,7 @@ namespace Sample03
 
 				default:
 					throw new NotSupportedException(string.Format("Operation {0} is not supported", node.NodeType));
-			};
+			}
 
 			return node;
 		}
