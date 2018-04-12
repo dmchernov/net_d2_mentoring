@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace Sample03.E3SClient
 {
 	[JsonObject]
-	public class Statement
-	{
+	public class Query
+    {
 		[JsonProperty("query")]
-		public string Query { get; set; }
+		public string Value { get; set; }
 	}
 
 	[JsonObject]
@@ -44,7 +44,7 @@ namespace Sample03.E3SClient
 		}
 
 		[JsonProperty("statements")]
-		public List<Statement> Statements { get; set; }
+		public List<Query> Statements { get; set; }
 
 		[JsonProperty("filters")]
 		public List<Filter> Filters { get; set; }

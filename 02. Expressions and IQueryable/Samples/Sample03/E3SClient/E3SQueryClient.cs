@@ -14,7 +14,7 @@ namespace Sample03.E3SClient
 	{
 		private string UserName;
 		private string Password;
-		private Uri BaseAddress = new Uri("https://e3s.epam.com/eco/rest/e3s-eco-scripting-impl/0.1.0");
+		private Uri BaseAddress = new Uri("https://telescope.epam.com/eco/rest/e3s-eco-scripting-impl/0.1.0/data/searchFts");
 
 
 		public E3SQueryClient(string user, string password)
@@ -37,6 +37,27 @@ namespace Sample03.E3SClient
 
 
 		public IEnumerable SearchFTS(Type type, string query, int start = 0, int limit = 0)
+		{
+			HttpClient client = CreateClient();
+			var requestGenerator = new FTSRequestGenerator(BaseAddress);
+
+			Uri request = requestGenerator.GenerateRequestUrl(type, query, start, limit);
+
+			var resultString = client.GetStringAsync(request).Result;
+			var endType = typeof(FTSResponse<>).MakeGenericType(type);
+			var result = JsonConvert.DeserializeObject(resultString, endType);
+
+			var list = Activator.CreateInstance(typeof(List<>).MakeGenericType(type)) as IList;
+
+			foreach (object item in (IEnumerable)endType.GetProperty("items").GetValue(result))
+			{
+				list.Add(item.GetType().GetProperty("data").GetValue(item));
+			}
+
+			return list;
+		}
+
+	    public IEnumerable SearchFTS(Type type, List<string> query, int start = 0, int limit = 0)
 		{
 			HttpClient client = CreateClient();
 			var requestGenerator = new FTSRequestGenerator(BaseAddress);

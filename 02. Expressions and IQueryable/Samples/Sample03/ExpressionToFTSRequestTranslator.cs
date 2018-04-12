@@ -19,6 +19,14 @@ namespace Sample03
 			return resultString.ToString();
 		}
 
+		public List<string> TranslateEx(Expression exp)
+		{
+			resultString = new StringBuilder();
+			Visit(exp);
+
+			return resultString.ToString().Split(new []{";"}, StringSplitOptions.RemoveEmptyEntries).ToList();
+		}
+
 		protected override Expression VisitMethodCall(MethodCallExpression node)
 		{
 			if (node.Method.DeclaringType == typeof(Queryable)
@@ -31,7 +39,7 @@ namespace Sample03
 			}
 
 			if (node.Method.DeclaringType == typeof(String)
-			    && node.Method.Name == nameof(String.Contains))
+				&& node.Method.Name == nameof(String.Contains))
 			{
 				Visit(node.Object);
 				resultString.Append("(*");
@@ -42,7 +50,7 @@ namespace Sample03
 			}
 
 			if (node.Method.DeclaringType == typeof(String)
-			    && node.Method.Name == nameof(String.StartsWith))
+				&& node.Method.Name == nameof(String.StartsWith))
 			{
 				Visit(node.Object);
 				resultString.Append("(");
@@ -53,7 +61,7 @@ namespace Sample03
 			}
 
 			if (node.Method.DeclaringType == typeof(String)
-			    && node.Method.Name == nameof(String.EndsWith))
+				&& node.Method.Name == nameof(String.EndsWith))
 			{
 				Visit(node.Object);
 				resultString.Append("(*");
@@ -71,20 +79,29 @@ namespace Sample03
 			switch (node.NodeType)
 			{
 				case ExpressionType.Equal:
-					if (!(node.Left.NodeType == ExpressionType.MemberAccess))
-						throw new NotSupportedException(string.Format("Left operand should be property or field", node.NodeType));
-
-					if (!(node.Right.NodeType == ExpressionType.Constant))
-						throw new NotSupportedException(string.Format("Right operand should be constant", node.NodeType));
-
-					Visit(node.Left);
-					resultString.Append("(");
-					Visit(node.Right);
-					resultString.Append(")");
+					if (node.Left.NodeType == ExpressionType.MemberAccess && node.Right.NodeType == ExpressionType.Constant)
+					{
+						Visit(node.Left);
+						resultString.Append("(");
+						Visit(node.Right);
+						resultString.Append(")");
+					}
+					else if (node.Left.NodeType == ExpressionType.Constant && node.Right.NodeType == ExpressionType.MemberAccess)
+					{
+						Visit(node.Right);
+						resultString.Append("(");
+						Visit(node.Left);
+						resultString.Append(")");
+					}
 					break;
 
+				case ExpressionType.AndAlso:
+					Visit(node.Left);
+					resultString.Append(";");
+					Visit(node.Right);
+					break;
 				default:
-					throw new NotSupportedException(string.Format("Operation {0} is not supported", node.NodeType));
+					throw new NotSupportedException($"Operation {node.NodeType} is not supported");
 			}
 
 			return node;

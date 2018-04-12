@@ -45,12 +45,12 @@ namespace Sample03
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			return provider.Execute<IEnumerable<T>>(expression).GetEnumerator();
+			return provider.ExecuteEx<IEnumerable<T>>(expression).GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return provider.Execute<IEnumerable>(expression).GetEnumerator();
+			return provider.ExecuteEx<IEnumerable>(expression).GetEnumerator();
 		}
 	}
 }

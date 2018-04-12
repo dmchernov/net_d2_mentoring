@@ -9,7 +9,7 @@ namespace Sample03.E3SClient
 {
 	public class FTSRequestGenerator
 	{
-		private readonly UriTemplate FTSSearchTemplate = new UriTemplate(@"data/searchFts?metaType={metaType}&query={query}&fields={fields}");
+		private readonly UriTemplate FTSSearchTemplate = new UriTemplate(@"?metaType={metaType}&query={query}&fields={fields}");
 		private readonly Uri BaseAddress;
 
 		public FTSRequestGenerator(string baseAddres) : this(new Uri(baseAddres))
@@ -32,12 +32,39 @@ namespace Sample03.E3SClient
 
 			var ftsQueryRequest = new FTSQueryRequest
 			{
-				Statements = new List<Statement>
+				Statements = new List<Query>
 				{
-					new Statement {
-						Query = query
-					}
+					new Query {Value = query}
 				},
+				Start = start,
+				Limit = limit
+			};
+
+			var ftsQueryRequestString = JsonConvert.SerializeObject(ftsQueryRequest);
+
+			var uri = FTSSearchTemplate.BindByName(BaseAddress,
+				new Dictionary<string, string>()
+				{
+					{ "metaType", metaTypeName },
+					{ "query", ftsQueryRequestString }
+				});
+
+			return uri;
+		}
+
+	    public Uri GenerateRequestUrl(Type type, List<string> stringQueries, int start = 0, int limit = 10)
+		{
+			string metaTypeName = GetMetaTypeName(type);
+            var queries = new List<Query>();
+		    foreach (var sq in stringQueries)
+		    {
+		        var q = new Query {Value = sq};
+		        queries.Add(q);
+		    }
+
+			var ftsQueryRequest = new FTSQueryRequest
+			{
+				Statements = new List<Query>(queries),
 				Start = start,
 				Limit = limit
 			};
