@@ -17,11 +17,9 @@ namespace ChainOfTasks
 			Console.ReadLine();
 		}
 
-		private static async Task Run()
+		private static Task Run()
 		{
-			var factory = new TaskFactory();
-
-			await factory.StartNew(Get10RandomDigits)
+			return Task.Factory.StartNew(Get10RandomDigits)
 				.ContinueWith(t => MultipleArray(t.Result))
 				.ContinueWith(t => SortArray(t.Result))
 				.ContinueWith(t => GetAvgValue(t.Result))
@@ -45,7 +43,9 @@ namespace ChainOfTasks
 		{
 			var array = new int[numbers.Length];
 			var r = new Random().Next(1, 10);
-			for (var i = 0; i < array.Length; i++)
+		    Console.WriteLine($"Random number: {r}");
+
+            for (var i = 0; i < array.Length; i++)
 			{
 				array[i] = numbers[i] * r;
 			}
@@ -55,11 +55,9 @@ namespace ChainOfTasks
 
 		private static int[] SortArray(int[] numbers)
 		{
-			var list = new List<int>(numbers);
-			list.Sort();
-			var sortedArray = list.ToArray();
-			PrintArrayToConsol("Sorted", sortedArray);
-			return sortedArray;
+            Array.Sort(numbers);
+			PrintArrayToConsol("Sorted", numbers);
+			return numbers;
 		}
 
 		private static double GetAvgValue(int[] numbers)

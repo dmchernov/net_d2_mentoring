@@ -47,23 +47,29 @@ namespace AsyncRepository
 
 		private void UpdateCustomers()
 		{
-			var customers = _model.Customers.ToList().AsReadOnly();
-			if (InvokeRequired)
-				Invoke(new MethodInvoker(() => gridControlCustomers.DataSource = customers));
-			else
-				gridControlCustomers.DataSource = customers;
+
+		    if (InvokeRequired)
+		        Invoke(new MethodInvoker(UpdateCustomerGrid));
+		    else
+		        UpdateCustomerGrid();
 		}
 
-		private int SelectedId
-		{
-			get
-			{
-				var c = gridView1.GetFocusedRow() as Customer;
-				return c != null ? c.Id.GetValueOrDefault() : 0;
-			}
-		}
+	    private void UpdateCustomerGrid()
+	    {
+	        var currentRowHandle = gridView1.FocusedRowHandle;
 
-		private string FirstName => textEditFirstName.EditValue?.ToString();
+	        var customers = _model.Customers.ToList().AsReadOnly();
+			gridControlCustomers.DataSource = customers;
+
+	        if (currentRowHandle >= gridView1.RowCount)
+	            gridView1.MoveLast();
+	        else
+	            gridView1.FocusedRowHandle = currentRowHandle;
+        }
+
+        private Customer SelectedCustomer => gridView1.GetFocusedRow() as Customer;
+
+	    private string FirstName => textEditFirstName.EditValue?.ToString();
 		private string LastName => textEditLastName.EditValue?.ToString();
 		private int Age => Int32.Parse(spinEditAge.EditValue.ToString());
 
@@ -74,23 +80,26 @@ namespace AsyncRepository
 
 		private void simpleButtonUpdate_Click(object sender, EventArgs e)
 		{
-			_model.SelectedId = SelectedId;
+			_model.SelectedId = SelectedCustomer.Id ?? 0;
 			_model.UpdateCustomer(FirstName, LastName, Age);
 		}
 
 		private void gridView1_FocusedRowChanged(object sender, DevExpress.XtraGrid.Views.Base.FocusedRowChangedEventArgs e)
 		{
-			textEditId.EditValue = SelectedId;
+			textEditId.EditValue = SelectedCustomer?.Id;
+			textEditFirstName.EditValue = SelectedCustomer?.FirstName;
+			textEditLastName.EditValue = SelectedCustomer?.LastName;
+			spinEditAge.EditValue = SelectedCustomer?.Age;
 		}
 
 		private void simpleButtonDelete_Click(object sender, EventArgs e)
 		{
-			_model.DeleteCustomer(SelectedId);
+			_model.DeleteCustomer(SelectedCustomer.Id ?? 0);
 		}
 
 		private async void simpleButtonGet_Click(object sender, EventArgs e)
 		{
-			var customerAsString = await _model.GetCustomerAsString(SelectedId);
+			var customerAsString = await _model.GetCustomerAsString(SelectedCustomer.Id ?? 0);
 			if (!String.IsNullOrEmpty(customerAsString))
 				MessageBox.Show(customerAsString);
 		}
