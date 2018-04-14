@@ -1,23 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace SharedCollection
 {
 	internal class Program
 	{
-		private static readonly object _lockObj = new object();
+		private static readonly object LockObj = new object();
 
-		private static readonly IList<int> _collection = new List<int>();
+		private static IList<int> Collection { get; set; } = new List<int>();
 
-		static Program()
-		{
-		}
-
-		private static void Main(string[] args)
+		private static void Main()
 		{
 			Run();
 			Console.ReadLine();
@@ -29,28 +22,28 @@ namespace SharedCollection
 			{
 				var p = i;
 				Task.Run(() => AddElementToCollection(p));
-				Task.Run(() => PrintCollection());
-				Thread.Sleep(50);
 			}
 		}
 
 		private static void PrintCollection()
 		{
 			string toPrint;
-			lock (_lockObj)
+			lock (LockObj)
 			{
-				toPrint = string.Join(";", _collection);
-				Console.WriteLine(toPrint);
+				toPrint = string.Join(";", Collection);
 			}
-		}
+		    Console.WriteLine(toPrint);
+        }
 
-		private static void AddElementToCollection(int i)
+        private static void AddElementToCollection(int element)
 		{
-			lock (_lockObj)
+			lock (LockObj)
 			{
-				Console.WriteLine($"{i} has been added to collection");
-				_collection.Add(i);
+				Console.WriteLine($"{element} has been added to collection");
+				Collection.Add(element);
 			}
+
+			Task.Run((Action) PrintCollection);
 		}
-	}
+    }
 }

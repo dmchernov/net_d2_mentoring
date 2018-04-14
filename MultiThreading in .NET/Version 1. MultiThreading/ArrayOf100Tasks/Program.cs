@@ -23,8 +23,7 @@ namespace ArrayOf100Tasks
 
 			for (var i = 0; i < tasks.Length; i++)
 			{
-				var arg = i;
-				tasks[i] = GetIterateTask(arg);
+				tasks[i] = GetIterateTask(i);
 			}
 
 			return tasks;

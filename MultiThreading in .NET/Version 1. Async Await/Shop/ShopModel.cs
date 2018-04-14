@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Threading.Tasks;
 using Shop.Annotations;
 
@@ -19,7 +17,7 @@ namespace Shop
 
 		private void _selectedProducts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedProducts"));
+		    OnPropertyChanged(nameof(SelectedProducts));
 		}
 
 		private IList<Product> _products = new List<Product>()
@@ -39,7 +37,6 @@ namespace Shop
 
 		public IList<Product> SelectedProducts => _selectedProducts;
 
-		public bool CanAdd => true;
 		public bool CanRemove => SelectedProducts?.Count > 0;
 
 		public decimal? Sum
@@ -61,20 +58,21 @@ namespace Shop
 				if (product != null)
 				{
 					_selectedProducts.Add(product);
-					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanRemove)));
+				    OnPropertyChanged(nameof(CanRemove));
 					Recalculate();
 				}
 			});
 		}
 
-		public async Task Delete(Product product)
+		public async Task Delete(int productId)
 		{
 			await new TaskFactory().StartNew(() =>
 			{
-				if (_selectedProducts.Contains(product))
+			    var product = _selectedProducts.FirstOrDefault(p => p.Id == productId);
+				if (product != null)
 				{
 					_selectedProducts.Remove(product);
-					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanRemove)));
+				    OnPropertyChanged(nameof(CanRemove));
 					Recalculate();
 				}
 			});
@@ -84,7 +82,6 @@ namespace Shop
 		{
 			Sum = await Task.Factory.StartNew(() =>
 			{
-				Thread.Sleep(3000);
 				return _selectedProducts.Sum(p => p.Price);
 			});
 		}

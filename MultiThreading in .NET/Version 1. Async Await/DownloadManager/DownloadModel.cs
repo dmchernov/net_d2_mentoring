@@ -1,5 +1,4 @@
 ﻿using DownloadManager.Annotations;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,19 +18,11 @@ namespace DownloadManager
 
 		public ObservableCollection<Download> Downloads => _dowloads;
 
-		public void Add(string uri, string caption, string fileName)
+		public void Add(Download download)
 		{
-			var localFileName = Path.Combine(Directory.GetCurrentDirectory(), "tmp", fileName);
-			var download = new Download
-			{
-				Caption = caption,
-				Uri = new Uri(uri),
-				LocalFileName = localFileName
-			};
-
 			_dowloads.Add(download);
 			download.PropertyChanged += PropertyChanged;
-			download.PropertyChanged += Download_PropertyChanged; ;
+			download.PropertyChanged += Download_PropertyChanged;
 		}
 
 		private void Download_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -77,7 +68,7 @@ namespace DownloadManager
 						download.PercentsDownloaded = args.ProgressPercentage;
 						if (token.IsCancellationRequested)
 						{
-							webClient.CancelAsync();
+							(sender as WebClient)?.CancelAsync();
 							download.Status = Status.Cancelled;
 							await Task.Factory.StartNew(() =>
 							{

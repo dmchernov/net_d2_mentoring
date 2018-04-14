@@ -6,9 +6,8 @@ namespace DownloadManager
 	public partial class DownloadManagerForm : Form
 	{
 		private DownloadModel _model;
-		private BindingSource _downloadsBindingSource;
 
-		private Download SelectedDownload
+	    private Download SelectedDownload
 		{
 			get
 			{
@@ -28,8 +27,6 @@ namespace DownloadManager
 			InitializeComponent();
 
 			_model = new DownloadModel();
-
-			_downloadsBindingSource = new BindingSource { DataSource = _model.Downloads };
 
 			_model.PropertyChanged += _model_PropertyChanged;
 
@@ -52,11 +49,12 @@ namespace DownloadManager
 
 		private void simpleButtonAdd_Click(object sender, EventArgs e)
 		{
-			var form = new AddResourceForm();
+			var download = new Download();
+			var form = new AddResourceForm(download);
 			var result = form.ShowDialog();
 			if (result == DialogResult.OK)
 			{
-				_model.Add(form.Uri, form.Caption, form.FileName);
+				_model.Add(download);
 			}
 		}
 

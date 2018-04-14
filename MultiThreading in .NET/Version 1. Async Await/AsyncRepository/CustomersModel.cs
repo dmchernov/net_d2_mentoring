@@ -14,7 +14,7 @@ namespace AsyncRepository
 
 		public BindingList<Customer> Customers { get; private set; } = new BindingList<Customer>();
 
-		private string[] _stringLog = new[] {""};
+		private string[] _stringLog = {""};
 		public string[] Log
 		{
 			get => _stringLog;
