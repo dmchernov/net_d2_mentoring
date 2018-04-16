@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 namespace Sample02_DSL
 {

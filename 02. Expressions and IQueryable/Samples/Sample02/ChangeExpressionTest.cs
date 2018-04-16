@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq.Expressions;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Sample02
