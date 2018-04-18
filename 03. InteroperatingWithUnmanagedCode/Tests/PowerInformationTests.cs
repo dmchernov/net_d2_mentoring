@@ -35,6 +35,12 @@ namespace Tests
 			Console.WriteLine(result);
 		}
 
+		[Test]
+		public void ReserveHiberFile_Test()
+		{
+			ReserveHiberFile();
+		}
+
 		private void PrintAllPowerInfo<T>(T data)
 		{
 			var fields = typeof(T).GetFields();

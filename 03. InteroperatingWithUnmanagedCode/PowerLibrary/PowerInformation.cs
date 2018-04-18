@@ -9,6 +9,7 @@ namespace PowerLibrary
 		private const int SYSTEM_BATTERY_STATE_LEVEL = 5;
 		private const int LAST_SLEEP_TIME_LEVEL = 15;
 		private const int LAST_WAKE_TIME_LEVEL = 14;
+		private const int SYSTEM_RESERVE_HIBER_FILE_LEVEL = 10;
 
 		const uint STATUS_SUCCESS = 0;
 
@@ -43,43 +44,35 @@ namespace PowerLibrary
 			int informationLevel,
 			IntPtr lpInputBuffer,
 			int nInputBufferSize,
-			out SystemBatteryState lpOutputBuffer,
-			int nOutputBufferSize
-		);
-
-		[DllImport("powrprof.dll")]
-		private static extern uint CallNtPowerInformation(
-			int informationLevel,
-			IntPtr lpInputBuffer,
-			int nInputBufferSize,
-			out SystemPowerInformation lpOutputBuffer,
-			int nOutputBufferSize
-		);
-
-		[DllImport("powrprof.dll")]
-		private static extern uint CallNtPowerInformation(
-			int informationLevel,
-			IntPtr lpInputBuffer,
-			int nInputBufferSize,
-			out long lpOutputBuffer,
+			[Out] IntPtr lpOutputBuffer,
 			int nOutputBufferSize
 		);
 
 		public static SystemBatteryState GetSystemBatteryState()
 		{
 			SystemBatteryState state;
-
-			uint retval = CallNtPowerInformation(
-				SYSTEM_BATTERY_STATE_LEVEL,
-				IntPtr.Zero,
-				0,
-				out state,
-				Marshal.SizeOf(typeof(SystemBatteryState))
-			);
-
-			if (retval == STATUS_SUCCESS)
+			var ptr = IntPtr.Zero;
+			try
 			{
-				return state;
+				ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(SystemBatteryState)));
+				uint retval = CallNtPowerInformation(
+					SYSTEM_BATTERY_STATE_LEVEL,
+					IntPtr.Zero,
+					0,
+					ptr,
+					Marshal.SizeOf(typeof(SystemBatteryState))
+				);
+
+				if (retval == STATUS_SUCCESS)
+				{
+					state = Marshal.PtrToStructure<SystemBatteryState>(ptr);
+					return state;
+				}
+			}
+			finally
+			{
+				if (ptr != IntPtr.Zero)
+					Marshal.FreeCoTaskMem(ptr);
 			}
 
 			throw new InvalidOperationException();
@@ -87,19 +80,29 @@ namespace PowerLibrary
 
 		public static SystemPowerInformation GetSystemPowerInformation()
 		{
-			SystemPowerInformation info;
-
-			uint retval = CallNtPowerInformation(
-				SYSTEM_POWER_INFORMATION_LEVEL,
-				IntPtr.Zero,
-				0,
-				out info,
-				Marshal.SizeOf(typeof(SystemPowerInformation))
-			);
-
-			if (retval == STATUS_SUCCESS)
+			SystemPowerInformation state;
+			var ptr = IntPtr.Zero;
+			try
 			{
-				return info;
+				ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(SystemPowerInformation)));
+				uint retval = CallNtPowerInformation(
+					SYSTEM_POWER_INFORMATION_LEVEL,
+					IntPtr.Zero,
+					0,
+					ptr,
+					Marshal.SizeOf(typeof(SystemPowerInformation))
+				);
+
+				if (retval == STATUS_SUCCESS)
+				{
+					state = Marshal.PtrToStructure<SystemPowerInformation>(ptr);
+					return state;
+				}
+			}
+			finally
+			{
+				if (ptr != IntPtr.Zero)
+					Marshal.FreeCoTaskMem(ptr);
 			}
 
 			throw new InvalidOperationException();
@@ -107,19 +110,29 @@ namespace PowerLibrary
 
 		public static DateTime GetLastSleepTime()
 		{
-			long intDate;
-
-			uint retval = CallNtPowerInformation(
-				LAST_SLEEP_TIME_LEVEL,
-				IntPtr.Zero,
-				0,
-				out intDate,
-				Marshal.SizeOf(typeof(long))
-			);
-
-			if (retval == STATUS_SUCCESS)
+			long ticks;
+			var ptr = IntPtr.Zero;
+			try
 			{
-				return new DateTime(intDate);
+				ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(long)));
+				uint retval = CallNtPowerInformation(
+					LAST_SLEEP_TIME_LEVEL,
+					IntPtr.Zero,
+					0,
+					ptr,
+					Marshal.SizeOf(typeof(long))
+				);
+
+				if (retval == STATUS_SUCCESS)
+				{
+					ticks = Marshal.ReadInt64(ptr);
+					return new DateTime(ticks);
+				}
+			}
+			finally
+			{
+				if (ptr != IntPtr.Zero)
+					Marshal.FreeCoTaskMem(ptr);
 			}
 
 			throw new InvalidOperationException();
@@ -127,22 +140,59 @@ namespace PowerLibrary
 
 		public static DateTime GetLastWakeTime()
 		{
-			long intDate;
-
-			uint retval = CallNtPowerInformation(
-				LAST_WAKE_TIME_LEVEL,
-				IntPtr.Zero,
-				0,
-				out intDate,
-				Marshal.SizeOf(typeof(long))
-			);
-
-			if (retval == STATUS_SUCCESS)
+			long ticks;
+			var ptr = IntPtr.Zero;
+			try
 			{
-				return new DateTime(intDate);
+				ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(long)));
+				uint retval = CallNtPowerInformation(
+					LAST_WAKE_TIME_LEVEL,
+					IntPtr.Zero,
+					0,
+					ptr,
+					Marshal.SizeOf(typeof(long))
+				);
+
+				if (retval == STATUS_SUCCESS)
+				{
+					ticks = Marshal.ReadInt64(ptr);
+					return new DateTime(ticks);
+				}
+			}
+			finally
+			{
+				if (ptr != IntPtr.Zero)
+					Marshal.FreeCoTaskMem(ptr);
 			}
 
 			throw new InvalidOperationException();
+		}
+
+		public static void ReserveHiberFile()
+		{
+			var ptr = IntPtr.Zero;
+			try
+			{
+				var boolPtr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(bool)));
+				Marshal.WriteInt32(boolPtr, 0, 1);
+				uint retval = CallNtPowerInformation(
+					SYSTEM_RESERVE_HIBER_FILE_LEVEL,
+					boolPtr,
+					0,
+					ptr,
+					0
+				);
+
+				if (retval != STATUS_SUCCESS)
+				{
+					throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+				}
+			}
+			finally
+			{
+				if (ptr != IntPtr.Zero)
+					Marshal.FreeCoTaskMem(ptr);
+			}
 		}
 	}
 }
