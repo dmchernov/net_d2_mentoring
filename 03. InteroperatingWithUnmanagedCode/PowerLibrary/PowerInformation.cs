@@ -141,7 +141,7 @@ namespace PowerLibrary
 					Marshal.FreeCoTaskMem(ptr);
 			}
 
-			MessageBox.Show(new DateTime(ticks).ToLongDateString());
+			MessageBox.Show(TimeSpan.FromTicks(ticks).ToString());
 		}
 
 		public static void ShowLastWakeTime()
@@ -170,7 +170,7 @@ namespace PowerLibrary
 					Marshal.FreeCoTaskMem(ptr);
 			}
 
-			MessageBox.Show(new DateTime(ticks).ToLongDateString());
+			MessageBox.Show(TimeSpan.FromTicks(ticks).ToString());
 		}
 
 		public static void ReserveHiberFile()
@@ -178,14 +178,14 @@ namespace PowerLibrary
 			var ptr = IntPtr.Zero;
 			try
 			{
-				var boolPtr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(bool)));
+				var boolPtr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(int)));
 				Marshal.WriteInt32(boolPtr, 0, 1);
 				uint retval = CallNtPowerInformation(
 					SYSTEM_RESERVE_HIBER_FILE_LEVEL,
 					boolPtr,
-					0,
+					Marshal.SizeOf(typeof(int)),
 					ptr,
-					0
+					Marshal.SizeOf(typeof(int))
 				);
 
 				if (retval != STATUS_SUCCESS)
@@ -210,9 +210,9 @@ namespace PowerLibrary
 				uint retval = CallNtPowerInformation(
 					SYSTEM_RESERVE_HIBER_FILE_LEVEL,
 					boolPtr,
-					0,
+					Marshal.SizeOf(typeof(int)),
 					ptr,
-					0
+					Marshal.SizeOf(typeof(int))
 				);
 
 				if (retval != STATUS_SUCCESS)
