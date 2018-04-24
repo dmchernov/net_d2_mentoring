@@ -10,35 +10,49 @@ namespace Tests
 		[Test]
 		public void SystemBatteryState_Test()
 		{
-			var result = GetSystemBatteryState();
-			PrintAllPowerInfo(result);
+			ShowSystemBatteryState();
 		}
 
 		[Test]
 		public void SystemPowerInformation_Test()
 		{
-			var result = GetSystemPowerInformation();
-			PrintAllPowerInfo(result);
+			ShowSystemPowerInformation();
 		}
 
 		[Test]
 		public void LastSleepTime_Test()
 		{
-			var result = GetLastSleepTime();
-			Console.WriteLine(result);
+			ShowLastSleepTime();
 		}
 
 		[Test]
 		public void LastWakeTime_Test()
 		{
-			var result = GetLastWakeTime();
-			Console.WriteLine(result);
+			ShowLastWakeTime();
 		}
 
 		[Test]
 		public void ReserveHiberFile_Test()
 		{
 			ReserveHiberFile();
+		}
+
+		[Test]
+		public void RemoveHiberFile_Test()
+		{
+			RemoveHiberFile();
+		}
+
+		[Test]
+		public void Hibernate_Test()
+		{
+			Hibernate();
+		}
+
+		[Test]
+		public void Suspend_Test()
+		{
+			Suspend();
 		}
 
 		private void PrintAllPowerInfo<T>(T data)

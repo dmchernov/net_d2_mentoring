@@ -1,5 +1,8 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
 
 namespace PowerLibrary
 {
@@ -48,9 +51,16 @@ namespace PowerLibrary
 			int nOutputBufferSize
 		);
 
-		public static SystemBatteryState GetSystemBatteryState()
+		[DllImport("powrprof.dll")]
+		private static extern bool SetSuspendState(
+			bool hibernate,
+			bool forceCritical,
+			bool disableWakeEvents
+		);
+
+		public static void ShowSystemBatteryState()
 		{
-			SystemBatteryState state;
+			SystemBatteryState state = new SystemBatteryState();
 			var ptr = IntPtr.Zero;
 			try
 			{
@@ -66,7 +76,6 @@ namespace PowerLibrary
 				if (retval == STATUS_SUCCESS)
 				{
 					state = Marshal.PtrToStructure<SystemBatteryState>(ptr);
-					return state;
 				}
 			}
 			finally
@@ -74,13 +83,12 @@ namespace PowerLibrary
 				if (ptr != IntPtr.Zero)
 					Marshal.FreeCoTaskMem(ptr);
 			}
-
-			throw new InvalidOperationException();
+			ShowAllPowerInfo(state);
 		}
 
-		public static SystemPowerInformation GetSystemPowerInformation()
+		public static void ShowSystemPowerInformation()
 		{
-			SystemPowerInformation state;
+			SystemPowerInformation state = new SystemPowerInformation();
 			var ptr = IntPtr.Zero;
 			try
 			{
@@ -96,7 +104,6 @@ namespace PowerLibrary
 				if (retval == STATUS_SUCCESS)
 				{
 					state = Marshal.PtrToStructure<SystemPowerInformation>(ptr);
-					return state;
 				}
 			}
 			finally
@@ -105,19 +112,19 @@ namespace PowerLibrary
 					Marshal.FreeCoTaskMem(ptr);
 			}
 
-			throw new InvalidOperationException();
+			ShowAllPowerInfo(state);
 		}
 
-		public static DateTime GetLastSleepTime()
+		public static void ShowLastSleepTime()
 		{
-			long ticks;
+			long ticks = 0;
 			var ptr = IntPtr.Zero;
 			try
 			{
 				ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(long)));
 				uint retval = CallNtPowerInformation(
 					LAST_SLEEP_TIME_LEVEL,
-					IntPtr.Zero,
+					(IntPtr)null,
 					0,
 					ptr,
 					Marshal.SizeOf(typeof(long))
@@ -126,7 +133,6 @@ namespace PowerLibrary
 				if (retval == STATUS_SUCCESS)
 				{
 					ticks = Marshal.ReadInt64(ptr);
-					return new DateTime(ticks);
 				}
 			}
 			finally
@@ -135,19 +141,19 @@ namespace PowerLibrary
 					Marshal.FreeCoTaskMem(ptr);
 			}
 
-			throw new InvalidOperationException();
+			MessageBox.Show(new DateTime(ticks).ToLongDateString());
 		}
 
-		public static DateTime GetLastWakeTime()
+		public static void ShowLastWakeTime()
 		{
-			long ticks;
+			long ticks = 0;
 			var ptr = IntPtr.Zero;
 			try
 			{
 				ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(long)));
 				uint retval = CallNtPowerInformation(
 					LAST_WAKE_TIME_LEVEL,
-					IntPtr.Zero,
+					(IntPtr)null,
 					0,
 					ptr,
 					Marshal.SizeOf(typeof(long))
@@ -156,7 +162,6 @@ namespace PowerLibrary
 				if (retval == STATUS_SUCCESS)
 				{
 					ticks = Marshal.ReadInt64(ptr);
-					return new DateTime(ticks);
 				}
 			}
 			finally
@@ -165,7 +170,7 @@ namespace PowerLibrary
 					Marshal.FreeCoTaskMem(ptr);
 			}
 
-			throw new InvalidOperationException();
+			MessageBox.Show(new DateTime(ticks).ToLongDateString());
 		}
 
 		public static void ReserveHiberFile()
@@ -185,7 +190,7 @@ namespace PowerLibrary
 
 				if (retval != STATUS_SUCCESS)
 				{
-					throw Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error());
+					throw new Win32Exception(Marshal.GetLastWin32Error());
 				}
 			}
 			finally
@@ -193,6 +198,55 @@ namespace PowerLibrary
 				if (ptr != IntPtr.Zero)
 					Marshal.FreeCoTaskMem(ptr);
 			}
+		}
+
+		public static void RemoveHiberFile()
+		{
+			var ptr = IntPtr.Zero;
+			try
+			{
+				var boolPtr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(bool)));
+				Marshal.WriteInt32(boolPtr, 0, 0);
+				uint retval = CallNtPowerInformation(
+					SYSTEM_RESERVE_HIBER_FILE_LEVEL,
+					boolPtr,
+					0,
+					ptr,
+					0
+				);
+
+				if (retval != STATUS_SUCCESS)
+				{
+					throw new Win32Exception(Marshal.GetLastWin32Error());
+				}
+			}
+			finally
+			{
+				if (ptr != IntPtr.Zero)
+					Marshal.FreeCoTaskMem(ptr);
+			}
+		}
+
+		public static void Hibernate()
+		{
+			SetSuspendState(true, false, false);
+		}
+
+		public static void Suspend()
+		{
+			SetSuspendState(false, false, false);
+		}
+
+		private static void ShowAllPowerInfo<T>(T data)
+		{
+			var fields = typeof(T).GetFields();
+			var result = new StringBuilder();
+			foreach (var info in fields)
+			{
+				result.AppendLine($"{info.Name} = {info.GetValue(data)}");
+			}
+
+			MessageBox.Show(result.ToString());
 		}
 	}
 }
