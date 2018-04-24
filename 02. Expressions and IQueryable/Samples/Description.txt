@@ -1,0 +1,4 @@
+﻿Задание 1 - проект ExpressionTree
+Задание 2 - проект Mapper
+
+Задание 3 - проект Sample03. Тесты в классе E3SProviderTests
