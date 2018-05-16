@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrackMeLauncher", "CrackMeLauncher.csproj", "{36BBB1F3-568C-4196-8612-BFC6082F54BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyGen", "..\KeyGen\KeyGen.csproj", "{725594F3-73E6-4358-9A5A-379B0D43C1C5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36BBB1F3-568C-4196-8612-BFC6082F54BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36BBB1F3-568C-4196-8612-BFC6082F54BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36BBB1F3-568C-4196-8612-BFC6082F54BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36BBB1F3-568C-4196-8612-BFC6082F54BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{725594F3-73E6-4358-9A5A-379B0D43C1C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{725594F3-73E6-4358-9A5A-379B0D43C1C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{725594F3-73E6-4358-9A5A-379B0D43C1C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{725594F3-73E6-4358-9A5A-379B0D43C1C5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {986BFE47-A1ED-4D51-ACF1-AC42B4B1B2AC}
+	EndGlobalSection
+EndGlobal
